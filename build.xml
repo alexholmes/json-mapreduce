@@ -1,0 +1,73 @@
+<project name="json-mapreduce" default="jar">
+
+    <property name="build.dir" location="build" />
+    <property name="test.build.dir" value="${build.dir}/test"/>
+    <property name="test.build.data" value="${test.build.dir}/data"/>
+
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+        <delete dir="reports"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <path id="lib.path.ref">
+            <fileset dir="lib" includes="*.jar"/>
+        </path>
+        <javac debug="true" srcdir="src/main/java" destdir="build/classes">
+            <classpath refid="lib.path.ref"/>
+        </javac>
+    </target>
+
+    <target name="test" depends="compile">
+        <mkdir dir="build/test-classes"/>
+        <mkdir dir="${test.build.data}"/>
+        <mkdir dir="reports/junit/xml"/>
+        <mkdir dir="reports/junit/html"/>
+
+        <path id="lib.path.ref">
+            <fileset dir="lib" includes="*.jar"/>
+            <pathelement location="build/classes"/>
+        </path>
+
+        <javac debug="true" srcdir="src/test/java" destdir="build/test-classes">
+            <classpath refid="lib.path.ref"/>
+
+        </javac>
+
+        <junit fork="yes" printsummary="yes" haltonfailure="no" failureproperty="test.failure">
+            <sysproperty key="test.build.data" value="${test.build.data}"/>
+            <classpath>
+                <pathelement location="build/classes"/>
+                <pathelement location="build/test-classes"/>
+                <fileset dir="lib" includes="*.jar"/>
+            </classpath>
+
+            <formatter type="xml"/>
+
+            <batchtest fork="yes" todir="reports/junit/xml">
+                <fileset dir="src/test/java">
+                    <include name="**/*Test*.java"/>
+                    <exclude name="**/AllTests.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="reports/junit/html">
+            <fileset dir="reports/junit/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report todir="reports/junit/html"/>
+        </junitreport>
+
+        <fail message="Tests failed" if="test.failure" />
+    </target>
+
+    <target name="jar" depends="compile, test">
+        <mkdir dir="dist/lib"/>
+        <jar destfile="dist/lib/json-mapreduce-1.0.jar" basedir="build/classes"/>
+    </target>
+
+</project>
