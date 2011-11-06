@@ -60,7 +60,7 @@ job.setInputFormatClass(MultiLineJsonInputFormat.class);
 MultiLineJsonInputFormat.setInputJsonMember(job, "id");
 </code></pre>
 
-The InputFormat gives you the JSON object in string form:
+The MultiLineJsonInputFormat supplies the Mapper with the JSON object in string form:
 
 <pre><code>public static class Map extends Mapper<LongWritable, Text, LongWritable, Text> {
 
