@@ -5,6 +5,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import static junit.framework.Assert.*;
 
@@ -33,6 +35,12 @@ public class PartitionedJsonParserSeekTest {
             File[] jsonOjbectFiles = jsonFile.getParentFile().listFiles(new FilenameFilter() {
                 public boolean accept(File file, String s) {
                     return s.contains("expected");
+                }
+            });
+
+            Arrays.sort(jsonOjbectFiles, new Comparator<File>() {
+                public int compare(File file, File file1) {
+                    return file.compareTo(file1);
                 }
             });
 
