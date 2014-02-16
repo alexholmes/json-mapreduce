@@ -71,3 +71,21 @@ The MultiLineJsonInputFormat supplies the Mapper with the JSON object in string 
   }
 }
 </code></pre>
+
+You can run a simple example that's bundled with the project as follows, where the two arguments are an
+input directury ("in" in the example below) where a sample JSON file is written, and the job output directory.
+
+<pre><code>
+$ hadoop jar json-mapreduce-1.0.jar com.alexholmes.json.mapreduce.ExampleJob in out
+</code></pre>
+
+After the job has completed you can examine the contents of the output directory in HDFS.
+
+<pre><code>
+$ hadoop fs -cat out/part*
+
+Got JSON: '{             "colorName":"red",             "hexValue":"#f00"         }'
+Got JSON: '{             "colorName":"green",             "hexValue":"#0f0"         }'
+Got JSON: '{             "colorName":"cyan",             "hexValue":"#0ff"         }'
+...
+</code></pre>

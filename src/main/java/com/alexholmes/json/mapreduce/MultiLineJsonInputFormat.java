@@ -24,7 +24,7 @@ public class MultiLineJsonInputFormat extends FileInputFormat<LongWritable, Text
     public RecordReader<LongWritable, Text>
     createRecordReader(InputSplit split,
                        TaskAttemptContext context) throws IOException {
-        String member = context.getConfiguration().get(CONFIG_MEMBER_NAME);
+        String member = HadoopCompat.getConfiguration(context).get(CONFIG_MEMBER_NAME);
 
         if (member == null) {
             throw new IOException("Missing configuration value for " + CONFIG_MEMBER_NAME);
@@ -33,13 +33,13 @@ public class MultiLineJsonInputFormat extends FileInputFormat<LongWritable, Text
     }
 
     public static void setInputJsonMember(Job job, String member) {
-        job.getConfiguration().set(CONFIG_MEMBER_NAME, member);
+        HadoopCompat.getConfiguration(job).set(CONFIG_MEMBER_NAME, member);
     }
 
     @Override
     protected boolean isSplitable(JobContext context, Path file) {
         CompressionCodec codec =
-                new CompressionCodecFactory(context.getConfiguration()).getCodec(file);
+                new CompressionCodecFactory(HadoopCompat.getConfiguration(context)).getCodec(file);
         return codec == null;
     }
 

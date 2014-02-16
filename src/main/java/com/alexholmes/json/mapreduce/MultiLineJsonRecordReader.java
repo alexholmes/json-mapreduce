@@ -43,7 +43,7 @@ public class MultiLineJsonRecordReader extends RecordReader<LongWritable, Text> 
     public void initialize(InputSplit genericSplit,
                            TaskAttemptContext context) throws IOException {
         FileSplit split = (FileSplit) genericSplit;
-        Configuration job = context.getConfiguration();
+        Configuration job = HadoopCompat.getConfiguration(context);
         this.maxObjectLength = job.getInt("mapred.multilinejsonrecordreader.maxlength", Integer.MAX_VALUE);
         start = split.getStart();
         end = start + split.getLength();
