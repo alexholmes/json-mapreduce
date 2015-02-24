@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
 import static com.alexholmes.json.parser.JsonLexer.JsonLexerState;
 
 /**
@@ -19,6 +22,7 @@ import static com.alexholmes.json.parser.JsonLexer.JsonLexerState;
 public class PartitionedJsonParser {
 
     private final InputStream is;
+    private final InputStreamReader inputStreamReader;
     private final JsonLexer lexer;
     private long bytesRead = 0;
     private boolean endOfStream;
@@ -26,6 +30,10 @@ public class PartitionedJsonParser {
     public PartitionedJsonParser(InputStream is) {
         this.is = is;
         this.lexer = new JsonLexer();
+
+        // You need to wrap the InputStream with an InputStreamReader,
+        // so that it can encode the incoming byte stream as UTF-8 characters
+        this.inputStreamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
     }
 
     private boolean scanToFirstBeginObject() throws IOException {
@@ -33,7 +41,7 @@ public class PartitionedJsonParser {
         //
         char prev = ' ';
         int i;
-        while ((i = is.read()) != -1) {
+        while ((i = inputStreamReader.read()) != -1) {
             char c = (char) i;
             bytesRead++;
             if (c == '{' && prev != '\\') {
@@ -75,8 +83,7 @@ public class PartitionedJsonParser {
         currentObject.append("{");
         objectStack.add(0);
 
-
-        while ((i = is.read()) != -1) {
+        while ((i = inputStreamReader.read()) != -1) {
             char c = (char) i;
             bytesRead++;
 
